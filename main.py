@@ -151,6 +151,29 @@ def isValidQueenMove(board, from_row, from_col, to_row, to_col, piece): #queen i
             isValidRookMove(board, from_row, from_col, to_row, to_col, piece))  
 
 
+def isValidKingMove(board, from_row, from_col, to_row, to_col, piece):
+    colour = piece[0]
+
+    row_diff=abs(to_row-from_row)
+    col_diff=abs(to_col-from_col)
+
+    if row_diff >1 or col_diff >1:  # Must move exactly 1 square
+        return False
+    if row_diff==0 and col_diff==0: # Must actually move
+        return False
+    
+    # Check destination
+    target=board[to_row][to_col]
+
+    if target !="__" and target[0]==colour:
+        return False
+    
+    return True
+
+
+    
+
+
     
 
 
@@ -279,6 +302,11 @@ while True:
                 continue
         elif piece[1]=="q": #queen
             if not isValidQueenMove(board,from_row,from_col,to_row,to_col,piece):
+                print("Illegal Move!")
+
+                continue
+        elif piece[1]=='k': #king
+            if not isValidKingMove(board,from_row,from_col,to_row,to_col,piece):
                 print("Illegal Move!")
 
                 continue
