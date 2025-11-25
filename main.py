@@ -38,7 +38,7 @@ def isValidPawnMove(board, from_row, from_col, to_row, to_col, piece):
         return (target !='__' and target[0] != colour)
     return False
 
-def isValidKninghtMove(board, from_row, from_col, to_row, to_col, piece):
+def isValidKnightMove(board, from_row, from_col, to_row, to_col, piece):
     colour = piece[0]
     row_diff=abs(to_row-from_row)
     col_diff=abs(to_col-from_col)
@@ -54,6 +54,51 @@ def isValidKninghtMove(board, from_row, from_col, to_row, to_col, piece):
     if target!="__" and target[0]==colour:
         return False
     return True
+
+def isValidBishopMove(board, from_row, from_col, to_row, to_col, piece):
+    colour = piece[0]
+    row_diff = abs(to_row - from_row)
+    col_diff = abs(to_col - from_col)
+
+    if row_diff != col_diff:
+        return False
+    
+    if to_row > from_row:
+        row_direction = 1
+    else:
+        row_direction = -1
+
+    if to_col > from_col:
+        col_direction = 1
+    else:
+        col_direction = -1
+
+    current_row = from_row
+    current_col = from_col
+
+    # Check all squares between start and end
+    while True:
+        current_row += row_direction
+        current_col += col_direction
+        
+        # Stop before checking the destination square
+        if current_row == to_row and current_col == to_col:
+            break
+        
+        # Check if this square is blocked
+        if board[current_row][current_col] != "__":
+            return False
+    
+    # Check destination square
+    target = board[to_row][to_col]
+    if target != "__" and target[0] == colour:
+        return False
+    
+    return True
+
+
+        
+
     
 
 
@@ -161,7 +206,12 @@ while True:
 
                 continue
         elif piece[1]=='n':#knight
-            if not isValidKninghtMove(board,from_row,from_col,to_row,to_col,piece):
+            if not isValidKnightMove(board,from_row,from_col,to_row,to_col,piece):
+                print("Illegal Move!")
+
+                continue
+        elif piece[1]=='b':
+            if not isValidBishopMove(board,from_row,from_col,to_row,to_col,piece):
                 print("Illegal Move!")
 
                 continue
