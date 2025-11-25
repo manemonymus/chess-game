@@ -38,6 +38,25 @@ def isValidPawnMove(board, from_row, from_col, to_row, to_col, piece):
         return (target !='__' and target[0] != colour)
     return False
 
+def isValidKninghtMove(board, from_row, from_col, to_row, to_col, piece):
+    colour = piece[0]
+    row_diff=abs(to_row-from_row)
+    col_diff=abs(to_col-from_col)
+
+    is_L_shape=(row_diff==2 and col_diff==1) or (row_diff==1 and col_diff==2)
+
+    if not is_L_shape:
+        return False
+    
+    target=board[to_row][to_col]
+
+    #check if target has own piece
+    if target!="__" and target[0]==colour:
+        return False
+    return True
+    
+
+
 
         
 
@@ -55,6 +74,7 @@ def printBoard(board):
             print(f" {piece} ", end="")
         print()
     print()
+
 for i in range(rows):
     board[1][i]='bp'
     board[-2][i]='wp'
@@ -135,10 +155,17 @@ while True:
             print("No piece there!")
             continue
 
-        if piece[1]=='p':
+        if piece[1]=='p':#pawn
             if not isValidPawnMove(board,from_row,from_col,to_row,to_col,piece):
                 print("Illegal Move!")
+
                 continue
+        elif piece[1]=='n':#knight
+            if not isValidKninghtMove(board,from_row,from_col,to_row,to_col,piece):
+                print("Illegal Move!")
+
+                continue
+
             
     
         if piece[0] != current_turn:  # piece[0] is 'w' or 'b'
