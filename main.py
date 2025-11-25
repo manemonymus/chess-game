@@ -146,6 +146,11 @@ def isValidRookMove(board, from_row, from_col, to_row, to_col, piece):
     return True
 
 
+def isValidQueenMove(board, from_row, from_col, to_row, to_col, piece): #queen is the same as rook and bishop combined
+    return (isValidBishopMove(board, from_row, from_col, to_row, to_col, piece) or 
+            isValidRookMove(board, from_row, from_col, to_row, to_col, piece))  
+
+
     
 
 
@@ -272,6 +277,12 @@ while True:
                 print("Illegal Move!")
 
                 continue
+        elif piece[1]=="q": #queen
+            if not isValidQueenMove(board,from_row,from_col,to_row,to_col,piece):
+                print("Illegal Move!")
+
+                continue
+
 
             
     
