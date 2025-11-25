@@ -4,6 +4,48 @@ rows=8
 cols=8
 board=np.full((rows,cols),'__',dtype=object)
 
+
+#check if move is legal
+def isValidPawnMove(board, from_row, from_col, to_row, to_col, piece):
+    colour=piece[0]
+    if colour=='w':
+        direction = -1 #row decreases since white moves up
+    else:
+        direction = 1 #black row goes down
+
+
+    #moving 1 square
+    if to_col == from_col and to_row == from_row + direction:  #check if the pos pawn is going to is empty
+        return board[to_row][to_col]=='__'
+    
+    #moving 2 squares
+    if to_col == from_col and to_row == from_row + (direction * 2):
+        if colour=='w':
+            starting_row=6
+        else:
+            starting_row=1
+        if from_row == starting_row: 
+
+            #both squares need to be empty
+            return (board[from_row + direction][to_col] =='__' and 
+                    board[to_row][to_col]=='__')
+        
+    # for captures (diagonal)
+    if abs(to_col - from_col)==1 and to_row == from_row + direction:
+        target = board[to_row][to_col]
+
+        #should have enemy there
+        return (target !='__' and target[0] != colour)
+    return False
+
+
+        
+
+
+
+
+
+
 def printBoard(board):
     print("\n   a   b   c   d   e   f   g   h")
     for row in range(rows):
@@ -65,6 +107,8 @@ numMap={
     '2':6,
     '1':7
 }
+
+
 # Game loop
 current_turn = 'w'
 while True:
@@ -90,6 +134,12 @@ while True:
         if piece == '__':
             print("No piece there!")
             continue
+
+        if piece[1]=='p':
+            if not isValidPawnMove(board,from_row,from_col,to_row,to_col,piece):
+                print("Illegal Move!")
+                continue
+            
     
         if piece[0] != current_turn:  # piece[0] is 'w' or 'b'
             if current_turn =='w':
@@ -108,6 +158,4 @@ while True:
         
         
     printBoard(board)
-
-
 
