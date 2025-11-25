@@ -66,6 +66,7 @@ numMap={
     '1':7
 }
 # Game loop
+current_turn = 'w'
 while True:
     move = input("Enter your move (e.g., 'e2 e4') or 'resign': ")
     
@@ -86,8 +87,24 @@ while True:
         
    
         piece = board[from_row][from_col]
+        if piece == '__':
+            print("No piece there!")
+            continue
+    
+        if piece[0] != current_turn:  # piece[0] is 'w' or 'b'
+            if current_turn =='w':
+                print("It's white's turn!")
+            else:
+                print("It's Black's turn!")
+            
+            continue
+
         board[to_row][to_col] = piece
-        board[from_row][from_col] = '__'  
+        board[from_row][from_col] = '__'
+        if current_turn == 'w':
+            current_turn = 'b'
+        else:
+            current_turn = 'w'  
         
         
     printBoard(board)
