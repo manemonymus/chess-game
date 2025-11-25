@@ -96,6 +96,58 @@ def isValidBishopMove(board, from_row, from_col, to_row, to_col, piece):
     
     return True
 
+def isValidRookMove(board, from_row, from_col, to_row, to_col, piece):
+    colour=piece[0]
+
+    row_change=abs(to_row-from_row)
+    col_change=abs(to_col-from_col)
+
+    change=max(row_change,col_change)
+
+    if row_change>0 and col_change>0:   #must move in straight line
+        return False
+    if row_change==0 and col_change==0:
+        return False
+    
+    #determine direction
+    if to_row>from_row:
+        row_direction=1
+    else:
+        row_direction=-1
+
+    if to_col>from_col:
+        col_direction=1
+    else:
+        col_direction=-1
+
+    current_row=from_row
+    current_col=from_col
+
+    #check path
+    while True:
+        if change==row_change:
+            current_row+=row_direction
+        else:
+            current_col+=col_direction
+
+
+        if current_row==to_row and current_col==to_col:
+            break
+
+        if board[current_row][current_col]!="__":
+            return False
+        
+    #check destination
+    target=board[to_row][to_col]
+
+    if target !="__" and target[0]==colour:
+        return False
+    
+    return True
+
+
+    
+
 
         
 
@@ -210,8 +262,13 @@ while True:
                 print("Illegal Move!")
 
                 continue
-        elif piece[1]=='b':
+        elif piece[1]=='b': #bishop
             if not isValidBishopMove(board,from_row,from_col,to_row,to_col,piece):
+                print("Illegal Move!")
+
+                continue
+        elif piece[1]=='r': #rook
+            if not isValidRookMove(board,from_row,from_col,to_row,to_col,piece):
                 print("Illegal Move!")
 
                 continue
