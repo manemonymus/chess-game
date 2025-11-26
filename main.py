@@ -4,6 +4,13 @@ rows=8
 cols=8
 board=np.full((rows,cols),'__',dtype=object)
 
+# Track if king/rooks have moved for castling
+has_moved = {
+    'wk': False, 'bk': False,  
+    'wr_a': False, 'wr_h': False,  #('a' file is left rook 'h' file is right rook)
+    'br_a': False, 'br_h': False   
+}
+
 
 #check if move is legal
 def isValidPawnMove(board, from_row, from_col, to_row, to_col, piece):
@@ -319,6 +326,45 @@ def hasLegalMoves(board,colour):
                         return True #found legal move
     return False
 
+def canCastle(board, colour, is_kingside, has_moved):    #check if castling is legal
+    row=7 if colour=='w' else 0
+
+    if has_moved[colour+'k']:
+        return False
+    
+    if is_kingside:
+        if has_moved[colour+'r_h']:
+            return False
+        
+        #check if squares between k and r are empty
+        if board[row][5]!='__' or board[row][6]!='__':
+            return False
+        
+        #king cant move through check
+        enemy = 'b' if colour == 'w' else 'w'
+        if (isSquareUnderAttack(board, row, 4, enemy) or
+            isSquareUnderAttack(board, row, 5, enemy) or
+            isSquareUnderAttack(board, row, 6, enemy)):
+            return False
+    else:   #queenside
+        if has_moved[colour+'r_a']:
+            return False
+        
+        # Check squares between k and r are empty
+        if board[row][1] != '__' or board[row][2] != '__' or board[row][3] != '__':
+            return False
+        
+        #king cant move through check
+        enemy = 'b' if colour == 'w' else 'w'
+        if (isSquareUnderAttack(board, row, 4, enemy) or
+            isSquareUnderAttack(board, row, 3, enemy) or
+            isSquareUnderAttack(board, row, 2, enemy)):
+            return False
+    return True
+
+        
+
+
                     
 
 
@@ -435,6 +481,48 @@ while True:
             print("No piece there!")
             continue
 
+        #check for castling attempt
+
+        if piece[1] == 'k' and abs(to_col - from_col) == 2:
+
+            # King moving 2 squares = castling attempt
+
+            is_kingside = to_col > from_col  #moving right
+            
+            
+            if canCastle(board, current_turn, is_kingside, has_moved):
+                
+                board[to_row][to_col] = piece
+                board[from_row][from_col] = '__'
+                
+                # Move the rook
+                if is_kingside:
+                    
+                    rook_from_col = 7
+                    rook_to_col = 5
+                else:
+                    # Queenside
+                    rook_from_col = 0
+                    rook_to_col = 3
+                
+                rook = board[from_row][rook_from_col]
+                board[from_row][rook_to_col] = rook
+                board[from_row][rook_from_col] = '__'
+                
+                # Mark as moved
+                has_moved[piece[0] + 'k'] = True
+                
+                print("Castled!")
+                
+                # Switch turns and continue
+                current_turn = 'b' if current_turn == 'w' else 'w'
+                printBoard(board)
+                continue
+            else:
+                print("Cannot castle!")
+                continue
+
+
         if piece[1]=='p':#pawn
             if not isValidPawnMove(board,from_row,from_col,to_row,to_col,piece):
                 print("Illegal Move!")
@@ -484,6 +572,10 @@ while True:
         board[to_row][to_col] = piece
         board[from_row][from_col] = '__'
 
+
+
+
+
         # Check if this move leaves YOUR king in check
         if isKingInCheck(board, current_turn):
             # UNDO the move
@@ -491,6 +583,16 @@ while True:
             board[to_row][to_col] = captured_piece
             print("Illegal move! That would leave your king in check.")
             continue  # Don't switch turns
+
+
+
+        if piece[1] == 'k': #checking if a king or rook has moved for castling
+            has_moved[piece[0] + 'k'] = True
+        elif piece[1] == 'r':
+            if from_col == 0:  # a-file rook
+                has_moved[piece[0] + 'r_a'] = True
+            elif from_col == 7:  # h-file rook
+                has_moved[piece[0] + 'r_h'] = True
 
         #check for pawn promotion
         if piece[1] == 'p':  
