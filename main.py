@@ -492,6 +492,21 @@ while True:
             print("Illegal move! That would leave your king in check.")
             continue  # Don't switch turns
 
+        #check for pawn promotion
+        if piece[1] == 'p':  
+            if (piece[0] == 'w' and to_row == 0) or (piece[0] == 'b' and to_row == 7):
+                # Pawn reached the end
+                print("Pawn promotion! Choose piece (q/r/b/n): ", end="")
+                promotion = input().lower()
+                
+                while promotion not in ['q', 'r', 'b', 'n']:
+                    print("Invalid choice. Choose q/r/b/n: ", end="")
+                    promotion = input().lower()
+                
+                # Replace pawn with chosen piece
+                board[to_row][to_col] = piece[0] + promotion
+                print(f"Pawn promoted to {promotion.upper()}!")
+
         
         
 
