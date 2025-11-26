@@ -168,10 +168,107 @@ def isValidKingMove(board, from_row, from_col, to_row, to_col, piece):
     if target !="__" and target[0]==colour:
         return False
     
+    #  Check if king would be moving into check 
+    enemy_colour = 'b' if colour == 'w' else 'w'
+    
+    # Temporarily make the move to check
+    old_piece = board[to_row][to_col]
+    board[to_row][to_col] = piece
+    board[from_row][from_col] = '__'
+    
+    # Is the destination square under attack?
+    under_attack = isSquareUnderAttack(board, to_row, to_col, enemy_colour)
+    
+    # Undo the temporary move
+    board[from_row][from_col] = piece
+    board[to_row][to_col] = old_piece
+    
+    if under_attack:
+        return False
+    
     return True
 
+def isSquareUnderAttack(board,row,col,attacking_colour):
+    """
+    Check if a square is under attack by pieces of a given color.
+
+    Returns:
+        True if any piece of attacking_color can attack (row, col)
+    """
+
+    # check every square on board
+    for r in range(8):
+        for c in range(8):
+            piece=board[r][c]
+
+            if piece=="__" or piece[0]!=attacking_colour:
+                continue
+
+            piece_type=piece[1]
+
+
+            #pawn attack differently than they move
+            if piece_type=='p':
+                if attacking_colour=='w':
+                    # white pawns attack diagonally upward
+                    if r-1==row and abs(col-c)==1:
+                        return True
+                
+                else:
+                    # black pawns attack diagonally downwards
+                    if r+1==row and abs(col-c)==1:
+                        return True
+            
+            #for other pieces we can just use their respective functions
+            elif piece_type=='n':
+                if isValidKnightMove(board,r,c,row,col,piece):
+                    return True
+                
+            elif piece_type=='b':
+                if isValidBishopMove(board,r,c,row,col,piece):
+                    return True
+            
+            elif piece_type=='r':
+                if isValidRookMove(board,r,c,row,col,piece):
+                    return True
+            
+            elif piece_type=='q':
+                if isValidQueenMove(board,r,c,row,col,piece):
+                    return True
+                
+            elif piece_type=='k':
+                if isValidKingMove(board,r,c,row,col,piece):
+                    return True
+    return False
+
+
+def findKing(board, colour):
+    """
+    Find the position of the king for a given color.
+    """
+    for r in range(8):
+        for c in range(8):
+            if board[r][c] == colour + 'k':
+                return (r, c)
+                
+def isKingInCheck(board,colour):
+
+    """
+    Check if the king of a given color is currently in check.
+    
+    """
+    krow,kcol=findKing(board,colour)
+
+    enemy_colour=""
+    if colour=='w':
+        enemy_colour='b'
+    else:
+        enemy_colour='w'
+    
+    return isSquareUnderAttack(board,krow,kcol,enemy_colour)
 
     
+
 
 
     
@@ -314,21 +411,44 @@ while True:
 
             
     
-        if piece[0] != current_turn:  # piece[0] is 'w' or 'b'
+        if piece[0] != current_turn:  
             if current_turn =='w':
                 print("It's white's turn!")
             else:
                 print("It's Black's turn!")
             
             continue
+        
+        # note the piece at destination incase u need to undo
+        captured_piece = board[to_row][to_col]
 
+        # Make the move temporarily
         board[to_row][to_col] = piece
         board[from_row][from_col] = '__'
+
+        # Check if this move leaves YOUR king in check
+        if isKingInCheck(board, current_turn):
+            # UNDO the move
+            board[from_row][from_col] = piece
+            board[to_row][to_col] = captured_piece
+            print("Illegal move! That would leave your king in check.")
+            continue  # Don't switch turns
+
+        
+        
+
+        # Switch turns
         if current_turn == 'w':
             current_turn = 'b'
         else:
-            current_turn = 'w'  
-        
-        
-    printBoard(board)
+            current_turn = 'w'
 
+        printBoard(board)
+
+        # Check if the move puts opponent in check
+        enemy_colour = 'b' if current_turn == 'w' else 'w'
+
+        # check if the player whos about to move is in check
+        if isKingInCheck(board, current_turn):
+            color_name = "WHITE" if current_turn == 'w' else "BLACK"
+            print(f"\n*** {color_name} IS IN CHECK! ***\n")
