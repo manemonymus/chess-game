@@ -13,7 +13,7 @@ A fully functional command-line chess game built from scratch in Python.
 
 ## How to Run
 ```
-python chess.py
+python main.py
 ```
 
 ## Sample Moves
@@ -27,4 +27,5 @@ resign (forfeit the game)
 - Graphical user interface
 - Move history and notation
 - AI opponent
+
 
