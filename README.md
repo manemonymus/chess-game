@@ -23,9 +23,11 @@ resign (forfeit the game)
 ```
 
 ## Future Enhancements
-- Castling, en passant, pawn promotion
+- ~~pawn promotion~~
+- Castling, en passant, 
 - Graphical user interface
 - Move history and notation
 - AI opponent
+
 
 
