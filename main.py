@@ -267,6 +267,64 @@ def isKingInCheck(board,colour):
     
     return isSquareUnderAttack(board,krow,kcol,enemy_colour)
 
+def hasLegalMoves(board,colour):
+    #check if player has legal moves left
+    for from_row in range(8):
+        for from_col in range(8):
+            piece=board[from_row][from_col]
+
+            if piece=='__' or piece[0]!=colour:
+                continue
+
+
+            piece_type=piece[1]
+
+            for to_row in range(8):
+                for to_col in range(8):
+                    #check if move is valid for certain piece type
+                    isValid=False
+
+                    if piece_type == 'p':
+                        is_valid = isValidPawnMove(board, from_row, from_col, to_row, to_col, piece)
+                    elif piece_type == 'n':
+                        is_valid = isValidKnightMove(board, from_row, from_col, to_row, to_col, piece)
+                    elif piece_type == 'b':
+                        is_valid = isValidBishopMove(board, from_row, from_col, to_row, to_col, piece)
+                    elif piece_type == 'r':
+                        is_valid = isValidRookMove(board, from_row, from_col, to_row, to_col, piece)
+                    elif piece_type == 'q':
+                        is_valid = isValidQueenMove(board, from_row, from_col, to_row, to_col, piece)
+                    elif piece_type == 'k':
+                        is_valid = isValidKingMove(board, from_row, from_col, to_row, to_col, piece)
+
+                    if not is_valid:
+                        continue    #this moves doesnt work for this piece
+
+
+                    #if move is valid for a piece,does it leave the king in check
+
+                    #make move temporarily
+                    captured=board[to_row][to_col]
+                    board[to_row][to_col]=piece
+                    board[from_row][from_col]=="__"
+
+                    #check if king is still in check
+                    kingInCheck=isKingInCheck(board,colour)
+
+                    # Undo the move
+                    board[from_row][from_col] = piece
+                    board[to_row][to_col] = captured
+
+                    if not kingInCheck:
+                        return True #found legal move
+    return False
+
+                    
+
+
+
+
+
     
 
 
@@ -448,7 +506,21 @@ while True:
         # Check if the move puts opponent in check
         enemy_colour = 'b' if current_turn == 'w' else 'w'
 
-        # check if the player whos about to move is in check
+        
+
+        # Check if the player who's about to move is in check
         if isKingInCheck(board, current_turn):
             color_name = "WHITE" if current_turn == 'w' else "BLACK"
             print(f"\n*** {color_name} IS IN CHECK! ***\n")
+            
+            # Check for checkmate
+            if not hasLegalMoves(board, current_turn):
+                winner = "WHITE" if current_turn == 'b' else "BLACK"
+                print(f"\n🎉 CHECKMATE! {winner} WINS! 🎉\n")
+                break  
+        
+        else:
+            # Not in check - check for stalemate
+            if not hasLegalMoves(board, current_turn):
+                print("\n STALEMATE! The game is a draw. \n")
+                break  
