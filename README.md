@@ -12,9 +12,17 @@ A fully functional command-line chess game built from scratch in Python.
 - Path blocking for sliding pieces
 
 ## How to Run
+
+### for website
+```
+python app.py
+```
+
+### for command line
 ```
 python main.py
 ```
+
 
 ## Sample Moves
 ```
