@@ -29,10 +29,10 @@ resign (forfeit the game)
 - ~~pawn promotion~~
 - ~~Castling~~
 - ~~en passant~~ 
-- Graphical user interface
+- ~~web version~~
 - Move history and notation
 - AI opponent
-
+~
 
 
 
