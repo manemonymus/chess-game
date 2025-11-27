@@ -21,6 +21,9 @@ python main.py
 e2 e4  (move white pawn from e2 to e4)
 resign (forfeit the game)
 ```
+## Versions
+- `main.py` - Command-line interface
+- `chess_game.py` + website files - Web-based version
 
 ## Future Enhancements
 - ~~pawn promotion~~
@@ -29,6 +32,7 @@ resign (forfeit the game)
 - Graphical user interface
 - Move history and notation
 - AI opponent
+
 
 
 
