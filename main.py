@@ -10,10 +10,16 @@ has_moved = {
     'wr_a': False, 'wr_h': False,  #('a' file is left rook 'h' file is right rook)
     'br_a': False, 'br_h': False   
 }
+# Track last move for en passant
+last_move = {
+    'from': None,
+    'to': None,
+    'piece': None
+}
 
 
 #check if move is legal
-def isValidPawnMove(board, from_row, from_col, to_row, to_col, piece):
+def isValidPawnMove(board, from_row, from_col, to_row, to_col, piece,last_move):
     colour=piece[0]
     if colour=='w':
         direction = -1 #row decreases since white moves up
@@ -42,7 +48,22 @@ def isValidPawnMove(board, from_row, from_col, to_row, to_col, piece):
         target = board[to_row][to_col]
 
         #should have enemy there
-        return (target !='__' and target[0] != colour)
+        if target != '__' and target[0] != colour:
+            return True
+        
+        # Check if en passant
+        if last_move['piece'] is not None and last_move['piece'][1] == 'p':
+            # Was last move a 2-square pawn move
+            last_from_row, last_from_col = last_move['from']
+            last_to_row, last_to_col = last_move['to']
+            
+            if abs(last_to_row - last_from_row) == 2:  # Enemy pawn moved 2 squares
+                # Is the enemy pawn next to us
+                if last_to_row == from_row and last_to_col == to_col:
+                    # We're capturing diagonally to where it would be
+                    return True
+        
+
     return False
 
 def isValidKnightMove(board, from_row, from_col, to_row, to_col, piece):
@@ -292,7 +313,7 @@ def hasLegalMoves(board,colour):
                     isValid=False
 
                     if piece_type == 'p':
-                        is_valid = isValidPawnMove(board, from_row, from_col, to_row, to_col, piece)
+                        is_valid = isValidPawnMove(board, from_row, from_col, to_row, to_col, piece,last_move)
                     elif piece_type == 'n':
                         is_valid = isValidKnightMove(board, from_row, from_col, to_row, to_col, piece)
                     elif piece_type == 'b':
@@ -524,7 +545,7 @@ while True:
 
 
         if piece[1]=='p':#pawn
-            if not isValidPawnMove(board,from_row,from_col,to_row,to_col,piece):
+            if not isValidPawnMove(board,from_row,from_col,to_row,to_col,piece,last_move):
                 print("Illegal Move!")
 
                 continue
@@ -572,6 +593,13 @@ while True:
         board[to_row][to_col] = piece
         board[from_row][from_col] = '__'
 
+        #for en passant
+        if piece[1] == 'p' and captured_piece == '__' and from_col != to_col:
+            # Remove the pawn that was captured en passant
+            captured_pawn_row = from_row  # Same row as attacking pawn
+            board[captured_pawn_row][to_col] = '__'
+            print("En passant capture!")
+
 
 
 
@@ -583,6 +611,11 @@ while True:
             board[to_row][to_col] = captured_piece
             print("Illegal move! That would leave your king in check.")
             continue  # Don't switch turns
+
+        # Move is legal - track for en passant
+        last_move['from'] = (from_row, from_col)
+        last_move['to'] = (to_row, to_col)
+        last_move['piece'] = piece
 
 
 
