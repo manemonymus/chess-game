@@ -144,11 +144,29 @@ h1 {
     border-radius: 50%;
 }
 
+/* Drag-and-drop enhancements */
 .piece {
     width: 80%;
     height: 80%;
     object-fit: contain;
-    pointer-events: none;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-drag: element;
+    transition: transform 0.1s;
+}
+
+.piece:active {
+    cursor: grabbing;
+}
+
+.piece:hover {
+    transform: scale(1.05);
+}
+
+/* When dragging */
+.square.drag-over {
+    background: rgba(186, 202, 68, 0.7) !important;
+    transform: scale(0.95);
 }
 
 @media (max-width: 600px) {

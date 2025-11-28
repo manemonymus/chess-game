@@ -1,6 +1,8 @@
 let selectedSquare = null;
 let currentBoard = null;
 let currentTurn = 'w';
+let draggedPiece = null;
+let draggedFrom = null;
 
 // Initialize game when page loads
 document.addEventListener('DOMContentLoaded', () => {
@@ -54,13 +56,74 @@ function renderBoard() {
                 img.src = `/static/pieces/${piece}.png`;
                 img.className = 'piece';
                 img.alt = piece;
+                img.draggable = true;
+                
+                // Add drag event listeners
+                img.addEventListener('dragstart', handleDragStart);
+                img.addEventListener('dragend', handleDragEnd);
+                
                 square.appendChild(img);
             }
             
+            // Add drop event listeners to squares
+            square.addEventListener('dragover', handleDragOver);
+            square.addEventListener('drop', handleDrop);
             square.addEventListener('click', () => handleSquareClick(row, col));
+            
             boardElement.appendChild(square);
         }
     }
+}
+
+function handleDragStart(e) {
+    const square = e.target.parentElement;
+    const row = parseInt(square.dataset.row);
+    const col = parseInt(square.dataset.col);
+    const piece = currentBoard[row][col];
+    
+    // Only allow dragging pieces of the current turn
+    if (piece[0] !== currentTurn) {
+        e.preventDefault();
+        return;
+    }
+    
+    draggedPiece = e.target;
+    draggedFrom = { row, col };
+    
+    // Add visual feedback
+    e.target.style.opacity = '0.5';
+    square.classList.add('selected');
+    
+    // Show legal moves
+    showLegalMoves(row, col);
+}
+
+function handleDragEnd(e) {
+    e.target.style.opacity = '1';
+    clearHighlights();
+    draggedPiece = null;
+    draggedFrom = null;
+}
+
+function handleDragOver(e) {
+    e.preventDefault(); // Necessary to allow drop
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    
+    if (!draggedFrom) return;
+    
+    const square = e.target.classList.contains('square') ? e.target : e.target.parentElement;
+    const toRow = parseInt(square.dataset.row);
+    const toCol = parseInt(square.dataset.col);
+    
+    // Make the move
+    makeMove(draggedFrom.row, draggedFrom.col, toRow, toCol);
+    
+    draggedPiece = null;
+    draggedFrom = null;
 }
 
 async function handleSquareClick(row, col) {

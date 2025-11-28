@@ -372,14 +372,7 @@ class ChessGame:
                 elif piece_type == 'q':
                     is_valid = self.isValidQueenMove(from_row, from_col, to_row, to_col, piece)
                 elif piece_type == 'k':
-                    # For king, also check castling
                     is_valid = self.isValidKingMove(from_row, from_col, to_row, to_col, piece)
-                    
-                    # Check castling moves
-                    if not is_valid and piece_type == 'k' and abs(to_col - from_col) == 2:
-                        is_kingside = to_col > from_col
-                        if self.canCastle(self.current_turn, is_kingside):
-                            is_valid = True
                 
                 if not is_valid:
                     continue
@@ -388,14 +381,29 @@ class ChessGame:
                 captured = self.board[to_row][to_col]
                 self.board[to_row][to_col] = piece
                 self.board[from_row][from_col] = '__'
+                
                 # Check if this leaves our king in check
                 king_in_check = self.isKingInCheck(self.current_turn)
+                
                 # Undo the move
                 self.board[from_row][from_col] = piece
                 self.board[to_row][to_col] = captured
+                
                 # If move doesn't leave king in check then it's legal
                 if not king_in_check:
                     legal_moves.append((to_row, to_col))
+        
+        # NOW check castling moves separately ONLY for kings
+        if piece_type == 'k':
+            row = 7 if self.current_turn == 'w' else 0
+            
+            # Kingside castling
+            if self.canCastle(self.current_turn, True):
+                legal_moves.append((row, 6))  # King moves to g-file
+            
+            # Queenside castling
+            if self.canCastle(self.current_turn, False):
+                legal_moves.append((row, 2))  # King moves to c-file
         
         return legal_moves
 
@@ -547,4 +555,4 @@ class ChessGame:
 
 
 if __name__ == "__main__":
-    from main import *  # Import  old file 
+    from main import *  # Import  old file
