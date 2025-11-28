@@ -63,7 +63,7 @@ function renderBoard() {
     }
 }
 
-function handleSquareClick(row, col) {
+async function handleSquareClick(row, col) {
     const piece = currentBoard[row][col];
     
     if (selectedSquare) {
@@ -72,10 +72,47 @@ function handleSquareClick(row, col) {
         selectedSquare = null;
         clearHighlights();
     } else if (piece !== '__' && piece[0] === currentTurn) {
-        // Select a piece
+        // Select a piece and show legal moves
         selectedSquare = { row, col };
-        highlightSquare(row, col);
+        await showLegalMoves(row, col);
     }
+}
+
+async function showLegalMoves(row, col) {
+    try {
+        const response = await fetch('/get_legal_moves', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from_row: row,
+                from_col: col
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            clearHighlights();
+            highlightSquare(row, col);
+            highlightLegalMoves(data.legal_moves);
+        }
+    } catch (error) {
+        console.error('Error getting legal moves:', error);
+    }
+}
+
+function highlightLegalMoves(legalMoves) {
+    const squares = document.querySelectorAll('.square');
+    squares.forEach(square => {
+        const row = parseInt(square.dataset.row);
+        const col = parseInt(square.dataset.col);
+        
+        if (legalMoves.some(move => move[0] === row && move[1] === col)) {
+            square.classList.add('valid-move');
+        }
+    });
 }
 
 async function makeMove(fromRow, fromCol, toRow, toCol) {
@@ -134,7 +171,7 @@ function highlightSquare(row, col) {
 
 function clearHighlights() {
     document.querySelectorAll('.square').forEach(square => {
-        square.classList.remove('selected');
+        square.classList.remove('selected', 'valid-move');
     });
 }
 

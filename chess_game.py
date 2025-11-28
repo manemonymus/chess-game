@@ -338,6 +338,66 @@ class ChessGame:
                         if not kingInCheck:
                             return True
         return False
+    
+    def getLegalMoves(self, from_row, from_col):
+        """
+        Get all legal moves for a piece at the given position.
+        Returns list of (row, col) tuples.
+        """
+        piece = self.board[from_row][from_col]
+        
+        if piece == '__':
+            return []
+        
+        if piece[0] != self.current_turn:
+            return []
+        
+        legal_moves = []
+        piece_type = piece[1]
+        
+        # Check all possible destination squares
+        for to_row in range(8):
+            for to_col in range(8):
+                # Check if move is valid for this piece type
+                is_valid = False
+                
+                if piece_type == 'p':
+                    is_valid = self.isValidPawnMove(from_row, from_col, to_row, to_col, piece)
+                elif piece_type == 'n':
+                    is_valid = self.isValidKnightMove(from_row, from_col, to_row, to_col, piece)
+                elif piece_type == 'b':
+                    is_valid = self.isValidBishopMove(from_row, from_col, to_row, to_col, piece)
+                elif piece_type == 'r':
+                    is_valid = self.isValidRookMove(from_row, from_col, to_row, to_col, piece)
+                elif piece_type == 'q':
+                    is_valid = self.isValidQueenMove(from_row, from_col, to_row, to_col, piece)
+                elif piece_type == 'k':
+                    # For king, also check castling
+                    is_valid = self.isValidKingMove(from_row, from_col, to_row, to_col, piece)
+                    
+                    # Check castling moves
+                    if not is_valid and piece_type == 'k' and abs(to_col - from_col) == 2:
+                        is_kingside = to_col > from_col
+                        if self.canCastle(self.current_turn, is_kingside):
+                            is_valid = True
+                
+                if not is_valid:
+                    continue
+                
+                # Make move temporarily to check if it leaves king in check
+                captured = self.board[to_row][to_col]
+                self.board[to_row][to_col] = piece
+                self.board[from_row][from_col] = '__'
+                # Check if this leaves our king in check
+                king_in_check = self.isKingInCheck(self.current_turn)
+                # Undo the move
+                self.board[from_row][from_col] = piece
+                self.board[to_row][to_col] = captured
+                # If move doesn't leave king in check then it's legal
+                if not king_in_check:
+                    legal_moves.append((to_row, to_col))
+        
+        return legal_moves
 
     def canCastle(self, colour, is_kingside):
         row = 7 if colour == 'w' else 0

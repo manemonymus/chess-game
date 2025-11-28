@@ -65,6 +65,25 @@ def make_move():
         'board': game.board.tolist(),
         'current_turn': game.current_turn
     })
+@app.route('/get_legal_moves', methods=['POST'])
+def get_legal_moves():
+    """Get all legal moves for a piece."""
+    game_id = session.get('game_id')
+    
+    if not game_id or game_id not in games:
+        return jsonify({'success': False, 'error': 'No active game'})
+    
+    data = request.json
+    from_row = data['from_row']
+    from_col = data['from_col']
+    
+    game = games[game_id]
+    legal_moves = game.getLegalMoves(from_row, from_col)
+    
+    return jsonify({
+        'success': True,
+        'legal_moves': legal_moves
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

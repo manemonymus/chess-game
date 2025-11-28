@@ -38,6 +38,7 @@ resign (forfeit the game)
 - ~~Castling~~
 - ~~en passant~~ 
 - ~~web version~~
+- ~~show legal moves~~
 - Move history and notation
 - AI opponent
 ~
