@@ -14,9 +14,7 @@ A fully functional command-line chess game built from scratch in Python.
 ## How to Run
 
 ### for website
-```
-python app.py
-```
+[chess-game](https://chess-game-t908.onrender.com)
 
 ### for command line
 ```
@@ -46,6 +44,7 @@ resign (forfeit the game)
 - Timer for timed games
 - Opening book and endgame tablebase
 ~
+
 
 
 
