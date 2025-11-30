@@ -41,6 +41,10 @@ resign (forfeit the game)
 - ~~show legal moves~~
 - Move history and notation
 - AI opponent
+- Undo/redo functionality
+- Online multiplayer with WebSockets
+- Timer for timed games
+- Opening book and endgame tablebase
 ~
 
 
