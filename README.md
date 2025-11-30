@@ -2,7 +2,7 @@
 
 A fully functional web-based chess game with AI opponent, built from scratch.
 
-## 🌐 [Play Now](https://chess-game-t908.onrender.com)
+## ♟️ [Play Now](https://chess-game-t908.onrender.com)
 
 ## Features
 - ✅ Complete chess rules implementation (all pieces, special moves)
@@ -52,3 +52,4 @@ Visit http://127.0.0.1:5000
 ---
 
 **Built from scratch by ME**  
+
