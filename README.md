@@ -1,50 +1,54 @@
+# Chess Game
 
-# Chess Game in Python
+A fully functional web-based chess game with AI opponent, built from scratch.
 
-A fully functional command-line chess game built from scratch in Python.
+## 🌐 [Play Now](https://chess-game-t908.onrender.com)
 
 ## Features
-- All 6 piece types with legal move validation
-- Check and checkmate detection
-- Stalemate detection
-- Turn-based gameplay
-- Capture logic
-- Path blocking for sliding pieces
+- ✅ Complete chess rules implementation (all pieces, special moves)
+- ✅ AI opponent powered by Lichess cloud engine
+- ✅ Drag-and-drop interface
+- ✅ Legal move highlighting
+- ✅ Check/checkmate/stalemate detection
+- ✅ Responsive design for mobile and desktop
+- ✅ Special moves: castling, en passant, pawn promotion
 
-## How to Run
+## Tech Stack
+- **Backend:** Python, Flask, NumPy
+- **Frontend:** Vanilla JavaScript, HTML5, CSS3
+- **AI:** Lichess Cloud API (Stockfish-powered)
+- **Deployment:** Render.com
 
-### for website
-[chess-game](https://chess-game-t908.onrender.com)
-
-### for command line
+## Local Setup
+```bash
+pip install -r requirements.txt
+python app.py
 ```
-python main.py
+Visit http://127.0.0.1:5000
+
+## Project Structure
+```
+├── main.py              # CLI version
+├── chess_game.py        # Core game logic
+├── app.py               # Flask backend
+├── templates/
+│   └── index.html
+├── static/
+│   ├── script.js
+│   ├── style.css
+│   └── pieces/
 ```
 
+## What I Learned
+- Game state management and complex validation logic
+- Object-oriented programming in Python
+- Flask API development and session management
+- Frontend-backend communication with AJAX
+- HTML5 drag-and-drop API
+- Responsive CSS design
+- Cloud deployment and CI/CD
+- Integrating third-party APIs
 
-## Sample Moves
-```
-e2 e4  (move white pawn from e2 to e4)
-resign (forfeit the game)
-```
-## Versions
-- `main.py` - Command-line interface
-- `chess_game.py` + website files - Web-based version
+---
 
-## Future Enhancements
-- ~~pawn promotion~~
-- ~~Castling~~
-- ~~en passant~~ 
-- ~~web version~~
-- ~~show legal moves~~
-- Move history and notation
-- ~~AI opponent~~
-- Undo/redo functionality
-- Online multiplayer with WebSockets
-- Timer for timed games
-- Opening book and endgame tablebase
-~
-
-
-
-
+**Built from scratch by ME**  
