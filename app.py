@@ -84,6 +84,36 @@ def get_legal_moves():
         'success': True,
         'legal_moves': legal_moves
     })
+@app.route('/ai_move', methods=['POST'])
+def ai_move():
+    """Make an AI move using Lichess cloud API."""
+    game_id = session.get('game_id')
+    
+    if not game_id or game_id not in games:
+        return jsonify({'success': False, 'error': 'No active game'})
+    
+    data = request.json
+    difficulty = data.get('difficulty', 5)
+    
+    game = games[game_id]
+    
+    try:
+        move = game.getAIMove(difficulty)
+        
+        if not move:
+            return jsonify({'success': False, 'message': 'AI could not find a move'})
+        
+        from_row, from_col, to_row, to_col = move
+        success, message = game.makeMove(from_row, from_col, to_row, to_col)
+        
+        return jsonify({
+            'success': success,
+            'message': message,
+            'board': game.board.tolist(),
+            'current_turn': game.current_turn
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'AI error: {str(e)}'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

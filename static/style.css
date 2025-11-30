@@ -183,3 +183,31 @@ h1 {
         gap: 10px;
     }
 }
+/* AI button styling */
+.button-group {
+    display: flex;
+    gap: 10px;
+}
+
+#ai-move-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#ai-move-btn:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
+#ai-move-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+}

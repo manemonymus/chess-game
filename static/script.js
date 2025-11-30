@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+document.getElementById('ai-move-btn').addEventListener('click', () => {
+    makeAIMove();
+});
 
 async function newGame() {
     try {
@@ -253,4 +256,49 @@ function clearMessage() {
     const messageElement = document.getElementById('message');
     messageElement.textContent = '';
     messageElement.className = '';
+}
+async function makeAIMove() {
+    const aiButton = document.getElementById('ai-move-btn');
+    aiButton.disabled = true;
+    aiButton.textContent = 'Thinking...';
+    
+    try {
+        const response = await fetch('/ai_move', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                difficulty: 5  // 0-20: 0 = easiest, 20 = strongest
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            currentBoard = data.board;
+            currentTurn = data.current_turn;
+            renderBoard();
+            updateTurnDisplay();
+            
+            if (data.message) {
+                if (data.message.includes('CHECKMATE')) {
+                    showMessage(data.message, 'checkmate');
+                } else if (data.message.includes('CHECK')) {
+                    showMessage(data.message, 'check');
+                } else if (data.message.includes('STALEMATE')) {
+                    showMessage(data.message, 'checkmate');
+                }
+            } else {
+                clearMessage();
+            }
+        } else {
+            showMessage(data.message || 'AI error!', 'error');
+        }
+    } catch (error) {
+        showMessage('Error getting AI move', 'error');
+    } finally {
+        aiButton.disabled = false;
+        aiButton.textContent = 'AI Move';
+    }
 }

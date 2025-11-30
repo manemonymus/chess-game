@@ -38,7 +38,7 @@ resign (forfeit the game)
 - ~~web version~~
 - ~~show legal moves~~
 - Move history and notation
-- AI opponent
+- ~~AI opponent~~
 - Undo/redo functionality
 - Online multiplayer with WebSockets
 - Timer for timed games

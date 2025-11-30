@@ -551,7 +551,102 @@ class ChessGame:
             return (True, "STALEMATE!")
         
         return (True, message)
-
+    
+    def boardToFEN(self):
+        """Convert current board to FEN notation for Stockfish."""
+        fen_rows = []
+        for row in range(8):
+            empty = 0
+            fen_row = ""
+            for col in range(8):
+                piece = self.board[row][col]
+                if piece == '__':
+                    empty += 1
+                else:
+                    if empty > 0:
+                        fen_row += str(empty)
+                        empty = 0
+                    # Convert piece notation: 'wp' -> 'P', 'bp' -> 'p'
+                    piece_char = piece[1]  # Get piece type (p, n, b, r, q, k)
+                    if piece[0] == 'w':
+                        fen_row += piece_char.upper()
+                    else:
+                        fen_row += piece_char.lower()
+            if empty > 0:
+                fen_row += str(empty)
+            fen_rows.append(fen_row)
+        
+        fen_board = '/'.join(fen_rows)
+        turn = 'w' if self.current_turn == 'w' else 'b'
+        
+        # FEN format: board turn castling en_passant halfmove fullmove
+        return f"{fen_board} {turn} - - 0 1"
+    
+    def getAIMove(self, difficulty=1):
+        """
+        Get best move using Lichess cloud API.
+        
+        Args:
+            difficulty: 1-8 (1 = easiest, 8 = strongest)
+        
+        Returns:
+            (from_row, from_col, to_row, to_col) tuple
+        """
+        import requests
+        
+        # Convert board to FEN
+        fen = self.boardToFEN()
+        
+        # Call Lichess API
+        try:
+            url = "https://lichess.org/api/cloud-eval"
+            params = {
+                'fen': fen,
+                'multiPv': 1
+            }
+            
+            response = requests.get(url, params=params, timeout=5)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if 'pvs' in data and len(data['pvs']) > 0:
+                    # Get best move from response
+                    best_move = data['pvs'][0]['moves'].split()[0]
+                    
+                    # Convert UCI format "e2e4" to coordinates
+                    from_col = ord(best_move[0]) - ord('a')
+                    from_row = 8 - int(best_move[1])
+                    to_col = ord(best_move[2]) - ord('a')
+                    to_row = 8 - int(best_move[3])
+                    
+                    return (from_row, from_col, to_row, to_col)
+            
+            # Fallback: return a random legal move
+            return self._getRandomLegalMove()
+            
+        except Exception as e:
+            print(f"Lichess API error: {e}")
+            return self._getRandomLegalMove()
+    
+    def _getRandomLegalMove(self):
+        """Fallback: get a random legal move."""
+        import random
+        
+        legal_moves = []
+        for from_row in range(8):
+            for from_col in range(8):
+                piece = self.board[from_row][from_col]
+                if piece == '__' or piece[0] != self.current_turn:
+                    continue
+                
+                moves = self.getLegalMoves(from_row, from_col)
+                for to_row, to_col in moves:
+                    legal_moves.append((from_row, from_col, to_row, to_col))
+        
+        if legal_moves:
+            return random.choice(legal_moves)
+        return None
 
 
 if __name__ == "__main__":

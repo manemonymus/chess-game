@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Game</title>
-    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
@@ -12,7 +12,10 @@
         
         <div class="game-info">
             <div id="current-turn">White's Turn</div>
-            <button id="new-game-btn">New Game</button>
+            <div class="button-group">
+                <button id="ai-move-btn">AI Move</button>
+                <button id="new-game-btn">New Game</button>
+            </div>
         </div>
         
         <div id="message"></div>
@@ -20,6 +23,6 @@
         <div id="chess-board"></div>
     </div>
     
-    <script src="../static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
