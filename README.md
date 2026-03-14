@@ -1,6 +1,6 @@
 # Chess Game
 
-A fully functional web-based chess game with AI opponent, built from scratch.
+A fully functional web-based chess game with AI opponent, built from scratch
 
 
 ## ♟️ [Play Now](https://chess-game-t908.onrender.com)
